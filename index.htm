@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Aggregate Calculator | Imran Ustad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Simple animation for the modal and result display */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto py-4 px-6">
+            <h1 class="text-lg md:text-xl font-bold text-center text-gray-700 tracking-wide">Aggregate Calculator for Computer Operator | Imran Ustad</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-6 flex-grow">
+
+        <!-- Name Prompt Modal -->
+        <div id="name-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 fade-in">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Welcome!</h2>
+                <p class="mb-6 text-gray-600">Please enter your full name to begin.</p>
+                <form id="name-form">
+                    <input type="text" id="candidate-name-input" placeholder="e.g., John Doe" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
+                    <button type="submit" class="w-full mt-4 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition transform hover:scale-105">
+                        Start Calculator
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Calculator Form Container -->
+        <div id="calculator-container" class="hidden">
+             <h2 id="welcome-message" class="text-2xl font-semibold text-center mb-6 text-gray-700"></h2>
+            <form id="marks-form" class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+
+                    <!-- SSC Section -->
+                    <div class="md:col-span-1 p-4 border rounded-lg bg-gray-50">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-700">SSC (Matric)</h3>
+                        <div class="space-y-3">
+                            <input type="number" id="ssc-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md" min="0">
+                            <input type="number" id="ssc-total" placeholder="Total Marks" class="w-full p-2 border rounded-md" min="1">
+                        </div>
+                    </div>
+
+                    <!-- HSSC Section -->
+                    <div class="md:col-span-1 p-4 border rounded-lg bg-gray-50">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-700">HSSC (Inter)</h3>
+                        <div class="space-y-3">
+                            <input type="number" id="hssc-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md" min="0">
+                            <input type="number" id="hssc-total" placeholder="Total Marks" class="w-full p-2 border rounded-md" min="1">
+                        </div>
+                    </div>
+
+                    <!-- Path 1: BA/BSC & MA/MSC -->
+                    <div class="md:col-span-1 p-4 border-2 border-transparent rounded-lg bg-blue-50 transition-all duration-300" id="bama-group">
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Path 1: BA/BSc & MA/MSc</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">BA/BSc</label>
+                                <input type="number" data-group="bama" id="ba-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md disabled:bg-gray-200 disabled:cursor-not-allowed" min="0">
+                                <input type="number" data-group="bama" id="ba-total" placeholder="Total Marks" class="w-full p-2 border rounded-md mt-2 disabled:bg-gray-200 disabled:cursor-not-allowed" min="1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">MA/MSc</label>
+                                <input type="number" data-group="bama" id="ma-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md disabled:bg-gray-200 disabled:cursor-not-allowed" min="0">
+                                <input type="number" data-group="bama" id="ma-total" placeholder="Total Marks" class="w-full p-2 border rounded-md mt-2 disabled:bg-gray-200 disabled:cursor-not-allowed" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Path 2: BS 4 Years -->
+                     <div class="md:col-span-1 p-4 border-2 border-transparent rounded-lg bg-green-50 transition-all duration-300" id="bs-group">
+                        <h3 class="text-lg font-semibold mb-3 text-green-800">Path 2: BS 4 Years</h3>
+                        <div class="space-y-3">
+                             <label class="block text-sm font-medium text-gray-600 mb-1 invisible">BS</label> <!-- Spacer -->
+                            <input type="number" data-group="bs" id="bs-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md disabled:bg-gray-200 disabled:cursor-not-allowed" min="0">
+                            <input type="number" data-group="bs" id="bs-total" placeholder="Total Marks" class="w-full p-2 border rounded-md disabled:bg-gray-200 disabled:cursor-not-allowed" min="1">
+                             <div class="h-28"></div> <!-- Spacer to align with the other column -->
+                        </div>
+                    </div>
+
+                    <!-- DIT Section -->
+                     <div class="md:col-span-1 p-4 border rounded-lg bg-gray-50">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-700">DIT</h3>
+                        <div class="space-y-3">
+                            <input type="number" id="dit-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md" min="0">
+                            <input type="number" id="dit-total" placeholder="Total Marks" class="w-full p-2 border rounded-md" min="1">
+                        </div>
+                    </div>
+
+                    <!-- CBT Section -->
+                    <div class="md:col-span-1 p-4 border rounded-lg bg-gray-50">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-700">CBT</h3>
+                        <div class="space-y-3">
+                            <input type="number" id="cbt-obtained" placeholder="Obtained Marks" class="w-full p-2 border rounded-md" min="0">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <button type="submit" class="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition transform hover:scale-105">
+                        Calculate Aggregate
+                    </button>
+                    <button type="button" id="reset-btn" class="w-full sm:w-auto bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition transform hover:scale-105">
+                        Reset
+                    </button>
+                </div>
+            </form>
+
+             <!-- Result Display -->
+            <div id="result-container" class="hidden max-w-4xl mx-auto mt-8 p-6 text-center bg-white rounded-xl shadow-lg border border-gray-200">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-auto">
+         <div class="container mx-auto py-4 px-6 border-t">
+            <p class="text-sm text-center text-gray-500">Aggregate Calculator for Computer Operator | Imran Ustad</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const nameModal = document.getElementById('name-modal');
+            const nameForm = document.getElementById('name-form');
+            const nameInput = document.getElementById('candidate-name-input');
+            const calculatorContainer = document.getElementById('calculator-container');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const marksForm = document.getElementById('marks-form');
+            const resultContainer = document.getElementById('result-container');
+            const resetBtn = document.getElementById('reset-btn');
+
+            const bamaInputs = document.querySelectorAll('input[data-group="bama"]');
+            const bsInputs = document.querySelectorAll('input[data-group="bs"]');
+            const bamaGroupDiv = document.getElementById('bama-group');
+            const bsGroupDiv = document.getElementById('bs-group');
+
+            let candidateName = '';
+
+            // 1. Handle Name Submission
+            nameForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                candidateName = nameInput.value.trim();
+                if (candidateName) {
+                    nameModal.classList.add('hidden');
+                    calculatorContainer.classList.remove('hidden');
+                    calculatorContainer.classList.add('fade-in');
+                    welcomeMessage.textContent = `Welcome, ${candidateName}!`;
+                }
+            });
+
+            // 2. Dynamic Field Restriction Logic
+            bamaInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    // If any BA/MA field has value, disable BS fields
+                    const hasBamaValue = Array.from(bamaInputs).some(i => i.value !== '');
+                    bsInputs.forEach(bsInput => {
+                        bsInput.disabled = hasBamaValue;
+                        if (hasBamaValue) bsInput.value = '';
+                    });
+                    
+                    if(hasBamaValue) {
+                        bsGroupDiv.classList.add('opacity-50');
+                        bamaGroupDiv.classList.remove('opacity-50');
+                        bamaGroupDiv.classList.add('border-blue-400');
+                        bsGroupDiv.classList.remove('border-green-400');
+                    } else {
+                        bsGroupDiv.classList.remove('opacity-50');
+                    }
+                });
+            });
+
+            bsInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                     // If any BS field has value, disable BA/MA fields
+                    const hasBsValue = Array.from(bsInputs).some(i => i.value !== '');
+                    bamaInputs.forEach(bamaInput => {
+                        bamaInput.disabled = hasBsValue;
+                        if(hasBsValue) bamaInput.value = '';
+                    });
+
+                     if(hasBsValue) {
+                        bamaGroupDiv.classList.add('opacity-50');
+                        bsGroupDiv.classList.remove('opacity-50');
+                        bsGroupDiv.classList.add('border-green-400');
+                        bamaGroupDiv.classList.remove('border-blue-400');
+
+                    } else {
+                        bamaGroupDiv.classList.remove('opacity-50');
+                    }
+                });
+            });
+
+            // 3. Handle Form Submission for Calculation
+            marksForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Helper to get numeric value, default to 0
+                const getVal = id => parseFloat(document.getElementById(id).value) || 0;
+                
+                // Get all marks
+                const sscObt = getVal('ssc-obtained');
+                const sscTotal = getVal('ssc-total');
+                const hsscObt = getVal('hssc-obtained');
+                const hsscTotal = getVal('hssc-total');
+                const baObt = getVal('ba-obtained');
+                const baTotal = getVal('ba-total');
+                const maObt = getVal('ma-obtained');
+                const maTotal = getVal('ma-total');
+                const bsObt = getVal('bs-obtained');
+                const bsTotal = getVal('bs-total');
+                const ditObt = getVal('dit-obtained');
+                const ditTotal = getVal('dit-total');
+                const cbtObt = getVal('cbt-obtained');
+
+                // --- Validation ---
+                let errors = [];
+                if (sscObt > sscTotal) errors.push('SSC Obtained marks cannot exceed Total marks.');
+                if (hsscObt > hsscTotal) errors.push('HSSC Obtained marks cannot exceed Total marks.');
+                if (baObt > baTotal) errors.push('BA/BSc Obtained marks cannot exceed Total marks.');
+                if (maObt > maTotal) errors.push('MA/MSc Obtained marks cannot exceed Total marks.');
+                if (bsObt > bsTotal) errors.push('BS Obtained marks cannot exceed Total marks.');
+                if (ditObt > ditTotal) errors.push('DIT Obtained marks cannot exceed Total marks.');
+
+                if(errors.length > 0) {
+                    displayResult(errors.join('<br>'), 'error');
+                    return;
+                }
+
+                // --- Calculation ---
+                let sscAgg = sscTotal > 0 ? (sscObt / sscTotal) * 30 : 0;
+                let hsscAgg = hsscTotal > 0 ? (hsscObt / hsscTotal) * 25 : 0;
+                let ditAgg = ditTotal > 0 ? (ditObt / ditTotal) * 15 : 0;
+
+                let totalAggregate = 0;
+                const bsIsDisabled = bsInputs[0].disabled;
+
+                if (bsIsDisabled) { // Path 1: BA/MA
+                    const baAgg = baTotal > 0 ? (baObt / baTotal) * 20 : 0;
+                    const maAgg = maTotal > 0 ? (maObt / maTotal) * 10 : 0;
+                    totalAggregate = sscAgg + hsscAgg + baAgg + maAgg + ditAgg + cbtObt;
+                } else { // Path 2: BS
+                    const bsAgg = bsTotal > 0 ? (bsObt / bsTotal) * 30 : 0;
+                    totalAggregate = sscAgg + hsscAgg + bsAgg + ditAgg + cbtObt;
+                }
+
+                const resultMessage = `<p class="text-gray-600 text-lg mb-2">${candidateName}, your result is:</p>
+                                       <p class="text-4xl font-bold text-green-600">${totalAggregate.toFixed(3)}</p>
+                                       <p class="text-gray-500 mt-1">Total Aggregate Score</p>`;
+                displayResult(resultMessage, 'success');
+            });
+
+            // 4. Reset Button Functionality
+            resetBtn.addEventListener('click', () => {
+                marksForm.reset();
+                [...bamaInputs, ...bsInputs].forEach(input => input.disabled = false);
+                resultContainer.classList.add('hidden');
+                bamaGroupDiv.classList.remove('opacity-50', 'border-blue-400');
+                bsGroupDiv.classList.remove('opacity-50', 'border-green-400');
+            });
+
+            // Function to display result or error
+            function displayResult(message, type) {
+                resultContainer.innerHTML = '';
+                if (type === 'error') {
+                    resultContainer.innerHTML = `<p class="text-red-600 font-semibold">${message}</p>`;
+                } else {
+                    resultContainer.innerHTML = message;
+                }
+                resultContainer.classList.remove('hidden');
+                resultContainer.classList.add('fade-in');
+                // Scroll to the result
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    </script>
+
+</body>
+</html>
